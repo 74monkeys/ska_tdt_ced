@@ -2,19 +2,47 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
+
+  #config.vm.provision :puppet do |puppet|
+  #   puppet.manifests_path = "puppet/manifests"
+  #   puppet.module_path = "puppet/modules"
+  #end
+
   # All Vagrant configuration is done here. The most common configuration
   # options are documented and commented below. For a complete reference,
   # please see the online documentation at vagrantup.com.
+  config.vm.define "artemis", autostart: false do |artemis|
+    artemis.vm.box = "ubuntu/trusty64"
+    artemis.vm.hostname = "artemis"
+    artemis.vm.provision :puppet do |puppet|
+         puppet.manifests_path = "puppet/manifests"
+         puppet.module_path = "puppet/modules"
+         puppet.manifest_file  = "artemis_dev_box.pp"
+    end
+  end
+
+  config.vm.define "pulsar_analysis", autostart: false do |pulsar_analysis|
+    pulsar_analysis.vm.box = "ubuntu/trusty64"
+    artemis.vm.hostname = "pulsar"
+    pulsar_analysis.vm.provision :puppet do |puppet|
+         puppet.manifests_path = "puppet/manifests"
+         puppet.module_path = "puppet/modules"
+         puppet.manifest_file  = "pulsar_analysis_box.pp"
+    end
+  end
 
   # Every Vagrant virtual environment requires a box to build off of.
   #config.vm.box = "ubuntu-server-1204-x64"
-  config.vm.box = "lucid32"
+  #config.vm.box = "lucid32"
+  config.vm.box = "ubuntu/trusty64"
 
   # The url from where the 'config.vm.box' box will be fetched if it
   # doesn't already exist on the user's system.
   # config.vm.box_url = "http://domain.com/path/to/above.box"
   #config.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/ubuntu-server-12042-x64-vbox4210.box"
-  config.vm.box_url = " http://files.vagrantup.com/lucid32.box"
+  #config.vm.box_url = " http://files.vagrantup.com/lucid32.box"
+  #config.vm.box_url = "https://vagrantcloud.com/ubuntu/trusty64.box"
+  config.vm.box_url = "https://vagrantcloud.com/ubuntu/trusty64/version/1/provider/virtualbox.box"
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
@@ -73,13 +101,7 @@ Vagrant.configure("2") do |config|
   #   puppet.manifests_path = "manifests"
   #   puppet.manifest_file  = "init.pp"
   # end
-  config.vm.provision :puppet do |puppet|
-     puppet.manifest_file  = "pulsar_ananlysis_box.pp"
-     puppet.manifests_path = "puppet/manifests"
-     puppet.module_path = "puppet/modules"
-  end
-
-  # Enable provisioning with chef solo, specifying a cookbooks path, roles
+    # Enable provisioning with chef solo, specifying a cookbooks path, roles
   # path, and data_bags path (all relative to this Vagrantfile), and adding
   # some recipes and/or roles.
   #
