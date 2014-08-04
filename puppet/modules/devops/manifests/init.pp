@@ -1,4 +1,5 @@
 class devops {
+    require git
 
     $devdir = "/home/vagrant/development"
 
