@@ -1,7 +1,6 @@
 class artemis {
     require devops
     require cmake
-    require git::client
     require gcc
     require fortran
     require pelican

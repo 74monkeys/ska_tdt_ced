@@ -1,6 +1,5 @@
 class pelican {
     require devops
-    require git::client
     require gcc
     require cmake
     require qt4

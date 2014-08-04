@@ -1,7 +1,6 @@
 class lofar_dal {
     require cmake
     require devops
-    require git::client
     require gcc
     require boost
     require hdf5
