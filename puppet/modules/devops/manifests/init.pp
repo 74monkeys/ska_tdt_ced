@@ -1,5 +1,5 @@
 class devops {
-    require git
+    require git::client
 
     $devdir = "/home/vagrant/development"
 
