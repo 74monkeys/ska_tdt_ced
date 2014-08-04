@@ -1,16 +1,30 @@
 class pelican {
-    include git::client
-    include gcc
-    include cmake
-    include qt4
-    include boost
-    include cppunit
+    require devops
+    require git::client
+    require gcc
+    require cmake
+    require qt4
+    require boost
+    require cppunit
 
-    $devdir = "/home/vagrant/development"
-    $srcdir = "$devdir/pelican/src"
-    $builddir = "$devdir/pelican/build"
-    $installdir = "$devdir/pelican/install"
+    $devdir = "$devops::devdir/pelican"
+    $srcdir = "$devdir/src"
+    $builddir = "$devdir/build"
+    $installdir = "$devdir/install"
+
+    file { "$devdir":
+      ensure => "directory",
+      owner => "vagrant"
+    }
+
+    file { "$builddir":
+      ensure => "directory",
+      require => File["$devdir"],
+      owner => "vagrant"
+    }
+
     vcsrepo { "$srcdir":
+      require => File["$devdir"],
       ensure   => present,
       provider => git,
       source   => "https://github.com/pelican/pelican.git",
@@ -19,7 +33,8 @@ class pelican {
     }
 
     exec { "build_pelican":
-           command => "mkdir -p $builddir && cd $builddir && cmake -DCMAKE_INSTALL_PREFIX=$installdir $srcdir/pelican && make install",
+           cwd => "$builddir",
+           command => "cmake -DCMAKE_INSTALL_PREFIX=$installdir $srcdir/pelican && make install",
            path => ["/bin", "/usr/bin"],
            user => "vagrant",
            timeout => 1200

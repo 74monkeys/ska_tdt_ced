@@ -40,4 +40,11 @@ Now you should have a running vm. You can ssh in to it:
 vagrant ssh <machine_name>
 
 
+Machines Available
+==================
 
+Name        : artemis
+Description : An artemis development machine with all dependencies installed
+
+Name        : pulsar_analysis
+Description : A workstation with all the common pulsar analysis tools installed

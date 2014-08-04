@@ -1,14 +1,16 @@
 class artemis {
-    include tarball
-    include git::client
-    include gcc
-    include fortran
-    include pelican
-    include cmake
-    include cppunit
-    include fftw3
-    include lapack
-    include blas
+    require devops
+    require cmake
+    require git::client
+    require gcc
+    require fortran
+    require pelican
+    require cppunit
+    require fftw3
+    require lapack
+    require lofar_dal
+    require blas
+    require hdf5
 
     Package { ensure => "installed" }
 
@@ -17,10 +19,23 @@ class artemis {
             ensure => present,
     }
 
-    $devdir = "/home/vagrant/development"
-    $srcdir = "$devdir/pelican-lofar/src"
-    $builddir = "$devdir/pelican-lofar/build"
+    $devdir = "$devops::devdir/pelican-lofar"
+    $srcdir = "$devdir/src"
+    $builddir = "$devdir/build"
+
+    file { "$devdir":
+      ensure => "directory",
+      owner => "vagrant"
+    }
+
+    file { "$builddir":
+      ensure => "directory",
+      require => File["$devdir"],
+      owner => "vagrant"
+    }
+
     vcsrepo { "$srcdir":
+      require => File["$devdir"],
       ensure   => present,
       provider => git,
       source   => "https://github.com/pelican/pelican-lofar.git",
@@ -29,7 +44,9 @@ class artemis {
     }
 
     exec { "build_pelican_lofar":
-           command => "mkdir -p $builddir && cd $builddir && cmake -DPELICAN_INCLUDE_DIR=$pelican::installdir/include -DPELICAN_INSTALL_DIR=$pelican::installdir $srcdir/src && make",
+           require => File["$builddir"],
+           cwd => "$builddir",
+           command => "cmake -DPELICAN_INCLUDE_DIR=$pelican::installdir/include -DPELICAN_INSTALL_DIR=$pelican::installdir -DLOFAR_DAL_INCLUDE_DIR=$lofar_dal::installdir/include $srcdir/src && make",
            path => ["/bin", "/usr/bin"],
            user => "vagrant",
            timeout => 1200
