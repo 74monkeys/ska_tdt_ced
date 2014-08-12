@@ -45,7 +45,7 @@ class artemis {
     exec { "build_pelican_lofar":
            require => File["$builddir"],
            cwd => "$builddir",
-           command => "cmake -DPELICAN_INCLUDE_DIR=$pelican::installdir/include -DPELICAN_INSTALL_DIR=$pelican::installdir -DLOFAR_DAL_INCLUDE_DIR=$lofar_dal::installdir/include $srcdir/src && make",
+           command => "cmake -DPELICAN_INCLUDE_DIR=$pelican::installdir/include -DPELICAN_INSTALL_DIR=$pelican::installdir -DLOFAR_DAL_INSTALL_DIR=$lofar_dal::installdir $srcdir/src && make",
            path => ["/bin", "/usr/bin"],
            user => "vagrant",
            timeout => 1200
