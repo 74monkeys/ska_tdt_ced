@@ -23,11 +23,22 @@ Vagrant.configure("2") do |config|
 
   config.vm.define "pulsar_analysis", autostart: false do |pulsar_analysis|
     pulsar_analysis.vm.box = "ubuntu/trusty64"
+### following line: copy paste bug ??? ***kwiesner***
     artemis.vm.hostname = "pulsar"
     pulsar_analysis.vm.provision :puppet do |puppet|
          puppet.manifests_path = "puppet/manifests"
          puppet.module_path = "puppet/modules"
          puppet.manifest_file  = "pulsar_analysis_box.pp"
+    end
+  end
+
+  config.vm.define "ciserver", autostart: false do |ciserver|
+    ciserver.vm.box = "ubuntu/trusty64"
+    ciserver.vm.hostname = "ciserver"
+    ciserver.vm.provision :puppet do |puppet|
+         puppet.manifests_path = "puppet/manifests"
+         puppet.module_path = "puppet/modules"
+         puppet.manifest_file  = "ci_server_box.pp"
     end
   end
 

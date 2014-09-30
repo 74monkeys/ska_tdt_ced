@@ -48,3 +48,6 @@ Description : An artemis development machine with all dependencies installed
 
 Name        : pulsar_analysis
 Description : A workstation with all the common pulsar analysis tools installed
+
+Name        : ciserver
+Description : A server for continous integration development powerd by Jenkins
