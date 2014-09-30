@@ -10,6 +10,7 @@ class ci_server {
     require lofar_dal
     require blas
     require hdf5
+    require jenkins
 
     Package { ensure => "installed" }
 
