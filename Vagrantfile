@@ -42,6 +42,17 @@ Vagrant.configure("2") do |config|
     end
   end
 
+  config.vm.define "pssprotobuild", autostart: false do |pssprotobuild|
+    pssprotobuild.vm.box = "skinoshita/scientific-6.5"
+    pssprotobuild.vm.hostname = "pssprotobuild"
+    pssprotobuild.vm.provision :puppet do |puppet|
+         puppet.manifests_path = "puppet/manifests"
+         puppet.module_path = "puppet/modules"
+         puppet.manifest_file  = "pss_proto_build.pp"
+    end
+  end
+
+
   # Every Vagrant virtual environment requires a box to build off of.
   #config.vm.box = "ubuntu-server-1204-x64"
   #config.vm.box = "lucid32"
