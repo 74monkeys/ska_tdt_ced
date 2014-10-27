@@ -23,8 +23,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.define "pulsar_analysis", autostart: false do |pulsar_analysis|
     pulsar_analysis.vm.box = "ubuntu/trusty64"
-### following line: copy paste bug ??? ***kwiesner***
-    artemis.vm.hostname = "pulsar"
+    pulsar_analysis.vm.hostname = "pulsar"
     pulsar_analysis.vm.provision :puppet do |puppet|
          puppet.manifests_path = "puppet/manifests"
          puppet.module_path = "puppet/modules"
