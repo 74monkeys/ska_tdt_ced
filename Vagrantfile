@@ -53,9 +53,8 @@ Vagrant.configure("2") do |config|
 
 
   # Every Vagrant virtual environment requires a box to build off of.
-  #config.vm.box = "ubuntu-server-1204-x64"
-  #config.vm.box = "lucid32"
   config.vm.box = "ubuntu/trusty64"
+
 
   # The url from where the 'config.vm.box' box will be fetched if it
   # doesn't already exist on the user's system.
@@ -63,7 +62,12 @@ Vagrant.configure("2") do |config|
   #config.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/ubuntu-server-12042-x64-vbox4210.box"
   #config.vm.box_url = " http://files.vagrantup.com/lucid32.box"
   #config.vm.box_url = "https://vagrantcloud.com/ubuntu/trusty64.box"
-  config.vm.box_url = "https://vagrantcloud.com/ubuntu/trusty64/version/1/provider/virtualbox.box"
+  #config.vm.box_url = "https://vagrantcloud.com/ubuntu/trusty64/version/1/provider/virtualbox.box"
+
+  config.vm.box_url = "http://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box"
+  config.vm.provider :virtualbox do |v|
+      v.customize ["modifyvm", :id, "--memory", "1024"]
+  end
 
   # Create a forwarded port mapping which allows access jenkins via host port 1234
   config.vm.network :forwarded_port, guest: 8080, host: 1234

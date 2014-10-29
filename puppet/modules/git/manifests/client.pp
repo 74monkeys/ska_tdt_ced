@@ -6,7 +6,11 @@
 #  include git::client
 #
 
+
 class git::client {
+
+  $exe = "/usr/bin/git"
+
   case $::osfamily {
     'RedHat': {
       $git_package_name = [ 'git' ]
@@ -20,7 +24,7 @@ class git::client {
       }
     }
     default: {
-      fail("Class['git::client']: Unsupported osfamily: ${::osfamily}")
+      warning("Class['git::client']: Unsupported osfamily: ${::osfamily}")
     }
   }
 

@@ -18,7 +18,7 @@ class artemis {
             ensure => present,
     }
 
-    $devdir = "$devops::devdir/pelican-lofar"
+    $devdir = "/Users/vagrant/development/pelican-lofar"
     $srcdir = "$devdir/src"
     $builddir = "$devdir/build"
 

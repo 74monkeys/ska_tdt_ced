@@ -12,4 +12,4 @@ smoke_tests: ${foreach module, $(modules), test_module_$(module)}
 
 test_module_%: ${wildcard ${MODULE_DIRECTORY}/%/tests/*.pp}
 	@echo Testing module $*
-	tests="${wildcard ${MODULE_DIRECTORY}/$*/tests/*.pp}"; if [ -n "$${tests}" ]; then for test in $${tests}; do ${PUPPET} apply --modulepath=${MODULE_DIRECTORY} --noop $${test}; done; fi;
+	@tests="${wildcard ${MODULE_DIRECTORY}/$*/tests/*.pp}"; if [ -n "$${tests}" ]; then for test in $${tests}; do ${PUPPET} apply --modulepath=${MODULE_DIRECTORY} --noop $${test}; done; fi;
