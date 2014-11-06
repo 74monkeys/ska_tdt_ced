@@ -1,11 +1,10 @@
 class psrsoft {
+    require gcc 
+    require fortran
+    require python
     include tarball
 
     Package { ensure => "installed" }
-
-    package { "python": }
-    package { "gcc": }
-    package { "gfortran": }
 
     $tar_file = "psrsoft.tar.gz"
     $url = "http://www.atnf.csiro.au/people/Michael.Keith/psrsoft/$tar_file"
