@@ -18,7 +18,7 @@ class pssprotobuild {
             ensure => present,
     }
 
-    $devdir = "$devops::devdir/ci_server"
+    $devdir = "$devops::devdir/pssprotobuild"
     $srcdir = "$devdir/src"
     $builddir = "$devdir/build"
 
@@ -37,15 +37,15 @@ class pssprotobuild {
       require => File["$devdir"],
       ensure   => present,
       provider => git,
-      source   => "https://github.com/pelican/pelican-lofar.git",
-      notify   => Exec[build_pelican_lofar],
+      source   => "https://repo.oerc.ox.ac.uk/karsten.wiesner/pipeline-prototype.git",
+      notify   => Exec[build_pipeline_prototype],
       user => "vagrant"
     }
 
-    exec { "build_pelican_lofar":
+    exec { "build_pipeline_prototype":
            require => File["$builddir"],
            cwd => "$builddir",
-           command => "cmake -DPELICAN_INCLUDE_DIR=$pelican::installdir/include -DPELICAN_INSTALL_DIR=$pelican::installdir -DLOFAR_DAL_INSTALL_DIR=$lofar_dal::installdir $srcdir/src && make",
+           command => "make",
            path => ["/bin", "/usr/bin"],
            user => "vagrant",
            timeout => 1200

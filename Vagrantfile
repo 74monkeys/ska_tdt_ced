@@ -34,6 +34,8 @@ Vagrant.configure("2") do |config|
   config.vm.define "ciserver", autostart: false do |ciserver|
     ciserver.vm.box = "ubuntu/trusty64"
     ciserver.vm.hostname = "ciserver"
+    # moved here from common section - please test!
+    config.vm.network :forwarded_port, guest: 8080, host: 1234
     ciserver.vm.provision :puppet do |puppet|
          puppet.manifests_path = "puppet/manifests"
          puppet.module_path = "puppet/modules"
@@ -42,7 +44,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "pssprotobuild", autostart: false do |pssprotobuild|
-    pssprotobuild.vm.box = "skinoshita/scientific-6.5"
+    pssprotobuild.vm.box = "ubuntu/trusty64"
     pssprotobuild.vm.hostname = "pssprotobuild"
     pssprotobuild.vm.provision :puppet do |puppet|
          puppet.manifests_path = "puppet/manifests"
@@ -70,7 +72,8 @@ Vagrant.configure("2") do |config|
   end
 
   # Create a forwarded port mapping which allows access jenkins via host port 1234
-  config.vm.network :forwarded_port, guest: 8080, host: 1234
+  # config.vm.network :forwarded_port, guest: 8080, host: 1234
+  # ---> moved to ci-server section please test!
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
