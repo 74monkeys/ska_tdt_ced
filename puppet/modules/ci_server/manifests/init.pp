@@ -1,55 +1,37 @@
 class ci_server {
-    require devops
-    require cmake
-    require gcc
-    require fortran
-    require pelican
-    require cppunit
-    require fftw3
-    require lapack
-    require lofar_dal
-    require blas
-    require hdf5
     require jenkins
 
-    Package { ensure => "installed" }
+    $doc_root='/var/www/docs'
 
-    group {
-        "ci_server":
-            ensure => present,
+    class { 'apache':
+        default_mods  => false,
+        default_confd_files => false,
+        docroot => $doc_root
     }
 
-    $devdir = "$devops::devdir/ci_server"
-    $srcdir = "$devdir/src"
-    $builddir = "$devdir/build"
-
-    file { "$devdir":
-      ensure => "directory",
-      owner => "vagrant"
+    include apache::mod::proxy_ajp
+    class { 'apache::mod::proxy':
+        proxy_requests => 'Off',
     }
 
-    file { "$builddir":
-      ensure => "directory",
-      require => File["$devdir"],
-      owner => "vagrant"
+    $servername = 'skabuildmaster.physics.ox.ac.uk'
+
+    # redirect all traffic to the ssl port
+    apache::vhost { 'skabuildmaster non-ssl':
+      servername      => $servername,
+      port            => '80',
+      docroot         => $doc_root,
+      redirect_status => 'permanent',
+      redirect_dest   => 'http://$servername:8080'
     }
 
-    vcsrepo { "$srcdir":
-      require => File["$devdir"],
-      ensure   => present,
-      provider => git,
-      source   => "https://github.com/pelican/pelican-lofar.git",
-      notify   => Exec[build_pelican_lofar],
-      user => "vagrant"
+    apache::vhost { 'skabuildmaster':
+        servername      => $servername,
+        docroot => $doc_root,
+        proxy_pass => [
+                        { 'path' => '/jenkins', 'url' => 'http://127.0.0.1:8080/jenkins',
+                          'reverse_urls' => [ 'http://127.0.0.1:8080/jenkins' ]
+                        }
+                      ]
     }
-
-    exec { "build_pelican_lofar":
-           require => File["$builddir"],
-           cwd => "$builddir",
-           command => "cmake -DPELICAN_INCLUDE_DIR=$pelican::installdir/include -DPELICAN_INSTALL_DIR=$pelican::installdir -DLOFAR_DAL_INSTALL_DIR=$lofar_dal::installdir $srcdir/src && make",
-           path => ["/bin", "/usr/bin"],
-           user => "vagrant",
-           timeout => 1200
-         }
-
 }

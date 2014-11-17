@@ -1,4 +1,13 @@
 class jenkins {
+    user {
+        "jenkins":
+            ensure => present,
+    }
+
+    group {
+        "jenkins":
+            ensure => present,
+    }
 
     exec { "wget_jenkins":
            command => "wget -q -O - https://jenkins-ci.org/debian/jenkins-ci.org.key | sudo apt-key add -",

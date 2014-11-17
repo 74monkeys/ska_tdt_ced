@@ -34,12 +34,16 @@ Vagrant.configure("2") do |config|
   config.vm.define "ciserver", autostart: false do |ciserver|
     ciserver.vm.box = "ubuntu/trusty64"
     ciserver.vm.hostname = "ciserver"
+    ciserver.vm.network "forwarded_port", guest: 8080, host: 8099
     # moved here from common section - please test!
     config.vm.network :forwarded_port, guest: 8080, host: 1234
     ciserver.vm.provision :puppet do |puppet|
          puppet.manifests_path = "puppet/manifests"
          puppet.module_path = "puppet/modules"
          puppet.manifest_file  = "ci_server_box.pp"
+         puppet.facter = {
+            'fqdn' => 'skabuildmaster'
+         }
     end
   end
 
