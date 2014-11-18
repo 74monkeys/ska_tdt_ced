@@ -14,5 +14,6 @@ file { '/etc/motd':
     content => "Welcome to the astro pulsar machine.\n"
 }
 
-include psrsoft
+#include psrsoft
 include devops
+include tempo
