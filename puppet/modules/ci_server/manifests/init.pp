@@ -1,5 +1,14 @@
 class ci_server {
+
     require jenkins
+
+    package { 'git':
+    	    ensure => '1:1.9.1-1',
+    }
+
+    package { 'emacs':
+    	    ensure => '45.0ubuntu1',
+    }
 
     $doc_root='/var/www/docs'
 

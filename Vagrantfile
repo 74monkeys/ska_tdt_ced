@@ -36,7 +36,7 @@ Vagrant.configure("2") do |config|
     ciserver.vm.hostname = "ciserver"
     ciserver.vm.network "forwarded_port", guest: 8080, host: 8099
     # moved here from common section - please test!
-    config.vm.network :forwarded_port, guest: 8080, host: 1234
+    # config.vm.network :forwarded_port, guest: 8080, host: 1234
     ciserver.vm.provision :puppet do |puppet|
          puppet.manifests_path = "puppet/manifests"
          puppet.module_path = "puppet/modules"
