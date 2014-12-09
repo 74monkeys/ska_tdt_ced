@@ -34,9 +34,10 @@ Vagrant.configure("2") do |config|
   config.vm.define "ciserver", autostart: false do |ciserver|
     ciserver.vm.box = "ubuntu/trusty64"
     ciserver.vm.hostname = "ciserver"
+    # forward jenkins port direct:
     ciserver.vm.network "forwarded_port", guest: 8080, host: 8099
-    # moved here from common section - please test!
-    # config.vm.network :forwarded_port, guest: 8080, host: 1234
+    # forward to jenkins via apache2 ssl port 
+    config.vm.network :forwarded_port, guest: 443, host: 8098
     ciserver.vm.provision :puppet do |puppet|
          puppet.manifests_path = "puppet/manifests"
          puppet.module_path = "puppet/modules"
