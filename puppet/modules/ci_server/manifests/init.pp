@@ -33,7 +33,7 @@ class ci_server {
     apache::vhost { 'skabuildmaster ssl jenkins':
         servername => $servername,
     	docroot => $doc_root,
-	port    => '80',
+	port    => '443',
         proxy_pass => [
                         { 'path' => '/jenkins', 'url' => 'http://localhost:8080',
                           'reverse_urls' => [ 'http://localhost:8080' ]
