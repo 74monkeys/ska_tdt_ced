@@ -39,16 +39,16 @@ class ci_server {
                           'reverse_urls' => [ 'http://localhost:8080' ]
                         }
                       ],
-	ssl => true,
-	ssl_certs_dir => '/vagrant/ssl/ssl/certs',
-        ssl_cert => '/vagrant/ssl/ssl/certs/apache.crt',
-        ssl_key  => '/vagrant/ssl/ssl/private/apache.key',
+	# ssl => true,
+	# ssl_certs_dir => '/vagrant/ssl/ssl/certs',
+        # ssl_cert => '/vagrant/ssl/ssl/certs/apache.crt',
+        # ssl_key  => '/vagrant/ssl/ssl/private/apache.key',
     }
 
     # redirect all traffic to the ssl port - not working!
     # On 'skabuildmaster ssl jenkins' set port to 443, docroot 
     # should not point to same docroot like 'skabuildmaster non-ssl' ?!
-    #apache::vhost { 'skabuildmaster non-ssl':
+    # apache::vhost { 'skabuildmaster non-ssl':
     #  servername      => $servername,
     #  port            => '80',
     #  docroot         => $doc_root,
