@@ -11,7 +11,7 @@ class ci_server {
 
     include apache::mod::proxy_ajp
     class { 'apache::mod::proxy':
-        proxy_requests => 'Off',
+        proxy_requests => 'Off'
     }
 
     $servername = 'skabuildmaster.physics.ox.ac.uk'
@@ -32,6 +32,11 @@ class ci_server {
                         { 'path' => '/jenkins', 'url' => 'http://127.0.0.1:8080/jenkins',
                           'reverse_urls' => [ 'http://127.0.0.1:8080/jenkins' ]
                         }
-                      ]
+                      ],
+	    ssl => true,
+	    # ssl_certs_dir => '/vagrant/ssl/ssl/certs',
+        # ssl_cert => '/vagrant/ssl/ssl/certs/apache.crt',
+        # ssl_key  => '/vagrant/ssl/ssl/private/apache.key',
     }
+
 }
