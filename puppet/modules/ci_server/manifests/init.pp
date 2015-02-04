@@ -1,5 +1,7 @@
 class ci_server {
 
+    include jenkins
+
 
     $servername = 'skabuildmaster.physics.ox.ac.uk'
     $doc_root='/var/www/html'

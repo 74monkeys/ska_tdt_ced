@@ -1,25 +1,41 @@
 # Class: jenkins::params
 #
+# This class manages parameters for the jenkins module
 #
 class jenkins::params {
-  $version                    = 'installed'
-  $lts                        = false
-  $repo                       = true
-  $service_enable             = true
-  $service_ensure             = 'running'
-  $install_java               = true
-  $swarm_version              = '1.17'
-  $default_plugins_host       = 'http://updates.jenkins-ci.org'
-  $port                       = '8080'
-
   case $::osfamily {
+    'RedHat': {
+      yumrepo { 'jenkins':
+        baseurl => 'http://pkg.jenkins-ci.org/redhat/jenkins.repo',
+        gpgcheck => 1,
+        enabled=> 1,
+        gpgkey => 'http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key'
+      }
+      $jenkins_packages = [ 'jenkins' ]
+    }
     'Debian': {
-      $libdir = '/usr/share/jenkins'
+        if !defined(Class['apt']) {
+            class { 'apt': }
+        }
+
+        apt::key { 'jenkins':
+            key => '9B7D32F2D50582E6',
+            key_source => 'http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key',
+            ensure => 'present'
+        }
+
+        apt::source { 'jenkins':
+            location => 'http://pkg.jenkins-ci.org/debian-stable',
+            release => '',
+            repos => 'binary/',
+            include_src => false,
+            require => Apt::Key['jenkins']
+        }
+      
+      $jenkins_packages = [ 'jenkins' ]
     }
     default: {
-      $libdir = '/usr/lib/jenkins'
+      fail("Class['jenkins::params']: Unsupported osfamily: ${::osfamily}")
     }
   }
 }
-
-
