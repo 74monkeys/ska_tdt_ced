@@ -34,7 +34,8 @@ Vagrant.configure("2") do |config|
   config.vm.define "ciserver", autostart: false do |ciserver|
     ciserver.vm.box = "ubuntu/trusty64"
     ciserver.vm.hostname = "ciserver"
-    ciserver.vm.network "forwarded_port", guest: 8080, host: 8099
+    ciserver.vm.network "forwarded_port", guest: 80, host: 8098
+    ciserver.vm.network "forwarded_port", guest: 443, host: 8099
     ciserver.vm.provision :puppet do |puppet|
          puppet.manifests_path = "puppet/manifests"
          puppet.module_path = "puppet/modules"
