@@ -15,7 +15,7 @@ file { '/etc/motd':
 }
 
 ci_server { 'jenkins_server': 
-            'servername' => "skabuildmaster.physics,ox.ac.uk",
-            'configuration_repo' = "git@repo.oerc.ox.ac.uk:christopher.williams/skabuildmaster_jenkins_config.git"
-            'requires' => Exec['system-update']
+            servername => "skabuildmaster.physics,ox.ac.uk",
+            configuration_repo => "git@repo.oerc.ox.ac.uk:christopher.williams/skabuildmaster_jenkins_config.git",
+            requires => Exec['system-update']
           }

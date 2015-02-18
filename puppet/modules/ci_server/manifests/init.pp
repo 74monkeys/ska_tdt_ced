@@ -1,13 +1,13 @@
 class ci_server (
     $servername = 'skabuildmaster.physics.ox.ac.uk',
     $doc_root = '/var/www/html',
-    $jenkins_config_repo = ""
+    $configuration_repo = ""
     )
 {
     include jenkins
 
-    jenkins { '$jenkins_config_repo' : 
-              'configuration_repo' => $jenkins_config_repo }
+    class { 'jenkins' : 
+              configuration_repo => "$configuration_repo" }
 
     # -- configure apache reverse proxy
     class { 'apache':
