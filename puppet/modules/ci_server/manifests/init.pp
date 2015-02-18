@@ -4,8 +4,6 @@ class ci_server (
     $configuration_repo = ""
     )
 {
-    include jenkins
-
     class { 'jenkins' : 
               configuration_repo => "$configuration_repo" }
 

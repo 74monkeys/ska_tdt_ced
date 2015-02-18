@@ -14,8 +14,8 @@ file { '/etc/motd':
     content => "Welcome to the ska tdt continous integration workflow server.\n"
 }
 
-ci_server { 'jenkins_server': 
+class { 'ci_server': 
             servername => "skabuildmaster.physics,ox.ac.uk",
             configuration_repo => "git@repo.oerc.ox.ac.uk:christopher.williams/skabuildmaster_jenkins_config.git",
-            requires => Exec['system-update']
-          }
+            require => Exec['system-update']
+      }
