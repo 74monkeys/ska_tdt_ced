@@ -46,6 +46,17 @@ Vagrant.configure("2") do |config|
     end
   end
 
+  # -- throwaway ubunutu box for running puppet unit tests
+  config.vm.define "ubuntu_test", autostart: false do |ubuntu_test|
+    ubuntu_test.vm.box = "ubuntu/trusty64"
+    ubuntu_test.vm.hostname = "ubuntu-test"
+    ubuntu_test.vm.provision :puppet do |puppet|
+         puppet.manifests_path = "puppet/manifests"
+         puppet.module_path = "puppet/modules"
+         puppet.manifest_file  = "ubuntu_default.pp"
+    end
+  end
+
   config.vm.define "pssprotobuild", autostart: false do |pssprotobuild|
     pssprotobuild.vm.box = "ubuntu/trusty64"
     pssprotobuild.vm.hostname = "pssprotobuild"

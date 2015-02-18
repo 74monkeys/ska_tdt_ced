@@ -1,10 +1,13 @@
-class ci_server {
-
+class ci_server (
+    $servername = 'skabuildmaster.physics.ox.ac.uk',
+    $doc_root = '/var/www/html',
+    $jenkins_config_repo = ""
+    )
+{
     include jenkins
 
-
-    $servername = 'skabuildmaster.physics.ox.ac.uk'
-    $doc_root='/var/www/html'
+    jenkins { '$jenkins_config_repo' : 
+              'configuration_repo' => $jenkins_config_repo }
 
     # -- configure apache reverse proxy
     class { 'apache':
@@ -16,6 +19,7 @@ class ci_server {
     include apache::mod::proxy_ajp
     include apache::mod::proxy_http
     include apache::mod::ssl
+    include apache::mod::headers
 
     class { 'apache::mod::proxy':
         proxy_requests => 'Off',
@@ -32,24 +36,26 @@ class ci_server {
         ssl_cert => '/etc/ssl/certs/ssl-cert-snakeoil.pem',
         ssl_key  => '/etc/ssl/private/ssl-cert-snakeoil.key',
 
+        proxy_preserve_host => 'On',
+
+        proxy_pass => [
+            {
+                'path' => '/jenkins', 
+                'url' => 'http://127.0.0.1:8080/jenkins',
+                'keywords' => ['nocanon'],
+                'reverse_urls' => [ "https://$servername/jenkins" ]
+            }
+            ],
+
         custom_fragment => '
-            ProxyPreserveHost On
-            SSLProxyEngine On
-            SSLProxyProtocol TLSv1
-            AllowEncodedSlashes NoDecode
+        AllowEncodedSlashes NoDecode
 
-            # --- SSL Reverse Proxy to Jenkins ---
-            <Location /jenkins>
-                SSLRequireSSL
-                ProxyPass http://127.0.0.1:8080/jenkins/
-                ProxyPassReverse http://127.0.0.1:8080/jenkins/
-            </Location>
-            <Location /jenkins/credential-store>
-                SSLRequireSSL
-                ProxyPass https://127.0.0.1:8080/jenkins/credential-store/
-                ProxyPassReverse https://127.0.0.1:8080/jenkins/credential-store/
-            </Location>',
-
+        # - SSL Reverse Proxy to Jenkins ---
+        <Location /jenkins>
+            RequestHeader set X-Forwarded-Proto "https"
+            RequestHeader set X-Forwarded-Port "443"
+        </Location>
+            '
     }
 
     # redirect all traffic to the ssl port
