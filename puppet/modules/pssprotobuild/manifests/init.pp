@@ -1,4 +1,7 @@
-class pssprotobuild {
+class pssprotobuild (
+    $jenkins_user = 'jenkins_slave',
+    $jenkins_workspace = '/var/jenkins',
+) {
     require devops
     require cmake
     require gcc
@@ -6,60 +9,29 @@ class pssprotobuild {
     require cppunit
     require fftw3
     require lapack
-    require lofar_dal
     require blas
-    require hdf5
 
     Package { ensure => "installed" }
 
     user {
-        "jenkins":
+        $jenkins_user:
         ensure => present,
-        comment => 'ci server use only',
+        home => "/home/$jenkins_user",
+        managehome => 'true',
+        comment => 'jenkins ci server use only',
     }
 
     ssh_authorized_key { 'jenkins_ssh':
-        user => 'jenkins',
+        user => $jenkins_user,
+        ensure => present,
         type => 'rsa',
-        key => 'AAAAB3NzaC1yc2EAAAADAQABAAABAQCpqH2Ikx52bW30DKo8VZH4fJBpiRF1Txn34TMHEpRZFWTAzh4YAlzLmuoSA+WavT/HuPSzX3PtJfg0YUqNpgyAU1Ey7UGRh7SJK6Gv3bEZW5YUmkFct9zA8qZpz2Cn0y+Eb1bFnx6EnFn3dFbBGrDMaxn4xXNcMfeKmYddpBfI3Utbxz/Zn41jyiK3YDL9PiIJ5a2BgyL9t0//uNJqMjI6M8Eh6yCDL8U1QduflDIpMHniUlFueoiounp4vOVLXcgSFDdS++BM/NFS3ePRUf3SZPljqjSmxzgoocRpqUfhrwp1GCpISNdTLDXiwPQxsz4JyTahelYPDyU/G+YBsPSj'
+        key => 'AAAAB3NzaC1yc2EAAAADAQABAAABAQCpqH2Ikx52bW30DKo8VZH4fJBpiRF1Txn34TMHEpRZFWTAzh4YAlzLmuoSA+WavT/HuPSzX3PtJfg0YUqNpgyAU1Ey7UGRh7SJK6Gv3bEZW5YUmkFct9zA8qZpz2Cn0y+Eb1bFnx6EnFn3dFbBGrDMaxn4xXNcMfeKmYddpBfI3Utbxz/Zn41jyiK3YDL9PiIJ5a2BgyL9t0//uNJqMjI6M8Eh6yCDL8U1QduflDIpMHniUlFueoiounp4vOVLXcgSFDdS++BM/NFS3ePRUf3SZPljqjSmxzgoocRpqUfhrwp1GCpISNdTLDXiwPQxsz4JyTahelYPDyU/G+YBsPSj',
+        require => User[$jenkins_user]
     }
 
-    group {
-        "pssprotobuild":
-            ensure => present,
-    }
-
-    $devdir = "$devops::devdir/pssprotobuild"
-    $srcdir = "$devdir/src"
-    $builddir = "$devdir/build"
-
-    file { "$devdir":
+    file { "$jenkins_workspace":
       ensure => "directory",
-      owner => "vagrant"
+      owner => $jenkins_user
     }
-
-    file { "$builddir":
-      ensure => "directory",
-      require => File["$devdir"],
-      owner => "vagrant"
-    }
-
-    vcsrepo { "$srcdir":
-      require => File["$devdir"],
-      ensure   => present,
-      provider => git,
-      source   => "https://repo.oerc.ox.ac.uk/karsten.wiesner/pipeline-prototype.git",
-      notify   => Exec[build_pipeline_prototype],
-      user => "vagrant"
-    }
-
-    exec { "build_pipeline_prototype":
-           require => File["$builddir"],
-           cwd => "$builddir",
-           command => "make",
-           path => ["/bin", "/usr/bin"],
-           user => "vagrant",
-           timeout => 1200
-         }
 
 }
