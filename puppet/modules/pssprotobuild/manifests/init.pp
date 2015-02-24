@@ -34,4 +34,8 @@ class pssprotobuild (
       owner => $jenkins_user
     }
 
+    java { 'java_runtime': 
+            distribution => 'jre'
+         }
+
 }
