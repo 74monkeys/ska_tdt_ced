@@ -27,7 +27,7 @@ class jenkins(
 
   file_line { 'jenkins_default' : 
               path => '/etc/default/jenkins',
-              line => 'JENKINS_ARGS="--webroot=/var/cache/jenkins/war --httpPort=$HTTP_PORT --ajp13Port=$AJP_PORT --prefix=$PREFIX"',
+              line => 'JENKINS_ARGS="--webroot=/var/cache/jenkins/war --httpPort=$HTTP_PORT --prefix=$PREFIX"',
               match => 'JENKINS_ARGS=*',
               require => Class['jenkins::install'],
               notify => Service['jenkins']
