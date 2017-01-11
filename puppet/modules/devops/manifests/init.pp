@@ -9,6 +9,10 @@ class paf_dependencies {
         ensure  => present,
     }
 
+    cpan { "File::HomeDir":
+        ensure  => present,
+    }
+
     cpan { "LWP::UserAgent":
         ensure  => present,
     }
