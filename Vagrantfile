@@ -95,7 +95,11 @@ Vagrant.configure("2") do |config|
   # For the next set of definitions add another OS
   boxes << {
     :box => "centos/7",
-    :prefix => "centos"
+    :prefix => "centos",
+    :preinstall => <<ENDSCRIPT
+      rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-7.noarch.rpm
+      yes | yum -y install puppet
+ENDSCRIPT
   }
   #:boxURL => "http://cloud.centos.org/centos/7/vagrant/x86_64/images/CentOS-7-x86_64-Vagrant-1601_01.VirtualBox.box"
   #:box => "puppetlabs/centos-7.0-64-puppet",
@@ -112,6 +116,9 @@ Vagrant.configure("2") do |config|
       ciserver.vm.hostname = box[:prefix] + "-" + "ciserver"
       ciserver.vm.network "forwarded_port", guest: 80, host: 8098
       ciserver.vm.network "forwarded_port", guest: 443, host: 8099
+      if box.key?(:preinstall)
+        config.vm.provision "shell", inline: box[:preinstall]
+      end
       ciserver.vm.provision :puppet do |puppet|
            puppet.manifests_path = "puppet/manifests"
            puppet.module_path = "puppet/modules"
