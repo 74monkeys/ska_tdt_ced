@@ -3,84 +3,126 @@
 
 Vagrant.configure("2") do |config|
 
-  #config.vm.provision :puppet do |puppet|
-  #   puppet.manifests_path = "puppet/manifests"
-  #   puppet.module_path = "puppet/modules"
-  #end
+  boxes = [
+      {
+          :box => "ubuntu/trusty64",
+          :prefix => "ubuntu",
+          :boxURL => "http://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box"
+      }
+  ]
 
-  # All Vagrant configuration is done here. The most common configuration
-  # options are documented and commented below. For a complete reference,
-  # please see the online documentation at vagrantup.com.
-  config.vm.define "artemis", autostart: false do |artemis|
-    artemis.vm.box = "ubuntu/trusty64"
-    artemis.vm.hostname = "artemis"
-    artemis.vm.provision :puppet do |puppet|
-         puppet.manifests_path = "puppet/manifests"
-         puppet.module_path = "puppet/modules"
-         puppet.manifest_file  = "artemis_dev_box.pp"
+  boxes.each do |box|
+
+    #config.vm.provision :puppet do |puppet|
+    #   puppet.manifests_path = "puppet/manifests"
+    #   puppet.module_path = "puppet/modules"
+    #end
+
+    # All Vagrant configuration is done here. The most common configuration
+    # options are documented and commented below. For a complete reference,
+    # please see the online documentation at vagrantup.com.
+    config.vm.define box[:prefix] + "-" +  "artemis", autostart: false do |artemis|
+      artemis.vm.box = box[:box]
+      if box.key?(:boxURL)
+        artemis.vm.box_url = box[:boxURL]
+      end
+      artemis.vm.hostname = box[:prefix] + "-" + "artemis"
+      artemis.vm.provision :puppet do |puppet|
+           puppet.manifests_path = "puppet/manifests"
+           puppet.module_path = "puppet/modules"
+           puppet.manifest_file  = "artemis_dev_box.pp"
+      end
     end
+
+    config.vm.define box[:prefix] + "-" +  "pulsar_analysis", autostart: false do |pulsar_analysis|
+      pulsar_analysis.vm.box = box[:box]
+      if box.key?(:boxURL)
+        pulsar_analysis.vm.box_url = box[:boxURL]
+      end
+      pulsar_analysis.vm.hostname = box[:prefix] + "-" + "pulsar"
+      pulsar_analysis.vm.provision :puppet do |puppet|
+           puppet.manifests_path = "puppet/manifests"
+           puppet.module_path = "puppet/modules"
+           puppet.manifest_file  = "pulsar_analysis_box.pp"
+      end
+    end
+
+
+    # -- throwaway ubunutu box for running puppet unit tests
+    config.vm.define box[:prefix] + "-" +  "ubuntu_test", autostart: false do |ubuntu_test|
+      ubuntu_test.vm.box = box[:box]
+      if box.key?(:boxURL)
+        ubuntu_test.vm.box_url = box[:boxURL]
+      end
+      ubuntu_test.vm.hostname = box[:prefix] + "-" +  "ubuntu-test"
+      ubuntu_test.vm.provision :puppet do |puppet|
+           puppet.manifests_path = "puppet/manifests"
+           puppet.module_path = "puppet/modules"
+           puppet.manifest_file  = "ubuntu_default.pp"
+      end
+    end
+
+    config.vm.define box[:prefix] + "-" +  "pssprotobuild", autostart: false do |pssprotobuild|
+      pssprotobuild.vm.box = box[:box]
+      if box.key?(:boxURL)
+        pssprotobuild.vm.box_url = box[:boxURL]
+      end
+      pssprotobuild.vm.hostname = box[:prefix] + "-" +  "pssprotobuild"
+      pssprotobuild.vm.provision :puppet do |puppet|
+           puppet.manifests_path = "puppet/manifests"
+           puppet.module_path = "puppet/modules"
+           puppet.manifest_file  = "pss_proto_build.pp"
+      end
+    end
+
+
+    # Every Vagrant virtual environment requires a box to build off of.
+    #config.vm.box = "ubuntu/trusty64"
+
+
+    # The url from where the 'config.vm.box' box will be fetched if it
+    # doesn't already exist on the user's system.
+    # config.vm.box_url = "http://domain.com/path/to/above.box"
+    #config.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/ubuntu-server-12042-x64-vbox4210.box"
+    #config.vm.box_url = " http://files.vagrantup.com/lucid32.box"
+    #config.vm.box_url = "https://vagrantcloud.com/ubuntu/trusty64.box"
+    #config.vm.box_url = "https://vagrantcloud.com/ubuntu/trusty64/version/1/provider/virtualbox.box"
+
+    #config.vm.box_url = "http://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box"
+
   end
 
-  config.vm.define "pulsar_analysis", autostart: false do |pulsar_analysis|
-    pulsar_analysis.vm.box = "ubuntu/trusty64"
-    pulsar_analysis.vm.hostname = "pulsar"
-    pulsar_analysis.vm.provision :puppet do |puppet|
-         puppet.manifests_path = "puppet/manifests"
-         puppet.module_path = "puppet/modules"
-         puppet.manifest_file  = "pulsar_analysis_box.pp"
+  # For the next set of definitions add another OS
+  boxes << {
+    :box => "centos/7",
+    :prefix => "centos"
+  }
+  #:boxURL => "http://cloud.centos.org/centos/7/vagrant/x86_64/images/CentOS-7-x86_64-Vagrant-1601_01.VirtualBox.box"
+  #:box => "puppetlabs/centos-7.0-64-puppet",
+  #:box => "centos/7",
+
+  boxes.each do |box|
+
+    config.vm.define box[:prefix] + "-" +  "ciserver", autostart: false do |ciserver|
+      ciserver.vm.box = box[:box]
+      if box.key?(:boxURL)
+        ciserver.vm.box_url = box[:boxURL]
+      end
+      #ciserver.vm.synced_folder ".", "/vagrant", type: "virtualbox"
+      ciserver.vm.hostname = box[:prefix] + "-" + "ciserver"
+      ciserver.vm.network "forwarded_port", guest: 80, host: 8098
+      ciserver.vm.network "forwarded_port", guest: 443, host: 8099
+      ciserver.vm.provision :puppet do |puppet|
+           puppet.manifests_path = "puppet/manifests"
+           puppet.module_path = "puppet/modules"
+           puppet.manifest_file  = "ci_server_box.pp"
+           puppet.facter = {
+              'fqdn' => 'skabuildmaster'
+           }
+      end
     end
+
   end
-
-  config.vm.define "ciserver", autostart: false do |ciserver|
-    ciserver.vm.box = "ubuntu/trusty64"
-    ciserver.vm.hostname = "ciserver"
-    ciserver.vm.network "forwarded_port", guest: 80, host: 8098
-    ciserver.vm.network "forwarded_port", guest: 443, host: 8099
-    ciserver.vm.provision :puppet do |puppet|
-         puppet.manifests_path = "puppet/manifests"
-         puppet.module_path = "puppet/modules"
-         puppet.manifest_file  = "ci_server_box.pp"
-         puppet.facter = {
-            'fqdn' => 'skabuildmaster'
-         }
-    end
-  end
-
-  # -- throwaway ubunutu box for running puppet unit tests
-  config.vm.define "ubuntu_test", autostart: false do |ubuntu_test|
-    ubuntu_test.vm.box = "ubuntu/trusty64"
-    ubuntu_test.vm.hostname = "ubuntu-test"
-    ubuntu_test.vm.provision :puppet do |puppet|
-         puppet.manifests_path = "puppet/manifests"
-         puppet.module_path = "puppet/modules"
-         puppet.manifest_file  = "ubuntu_default.pp"
-    end
-  end
-
-  config.vm.define "pssprotobuild", autostart: false do |pssprotobuild|
-    pssprotobuild.vm.box = "ubuntu/trusty64"
-    pssprotobuild.vm.hostname = "pssprotobuild"
-    pssprotobuild.vm.provision :puppet do |puppet|
-         puppet.manifests_path = "puppet/manifests"
-         puppet.module_path = "puppet/modules"
-         puppet.manifest_file  = "pss_proto_build.pp"
-    end
-  end
-
-
-  # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "ubuntu/trusty64"
-
-
-  # The url from where the 'config.vm.box' box will be fetched if it
-  # doesn't already exist on the user's system.
-  # config.vm.box_url = "http://domain.com/path/to/above.box"
-  #config.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/ubuntu-server-12042-x64-vbox4210.box"
-  #config.vm.box_url = " http://files.vagrantup.com/lucid32.box"
-  #config.vm.box_url = "https://vagrantcloud.com/ubuntu/trusty64.box"
-  #config.vm.box_url = "https://vagrantcloud.com/ubuntu/trusty64/version/1/provider/virtualbox.box"
-
-  config.vm.box_url = "http://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box"
   config.vm.provider :virtualbox do |v|
       v.customize ["modifyvm", :id, "--memory", "1024"]
   end
