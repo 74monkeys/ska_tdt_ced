@@ -1,10 +1,6 @@
 class paf_dependencies {
     require cpan
 
-    cpan { "IO::Tee":
-        ensure  => present,
-    }
-
     cpan { "File::Sync":
         ensure  => present,
     }
@@ -25,6 +21,7 @@ class paf_dependencies {
 class devops {
     require perl
     require paf_dependencies
+    require perl_lwp_https
 
     require git::client
 
