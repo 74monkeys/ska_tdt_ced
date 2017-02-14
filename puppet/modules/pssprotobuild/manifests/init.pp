@@ -10,7 +10,7 @@ class pssprotobuild (
     require fftw3
     require lapack
     require blas
-    require lcov113
+    require lcovswitch
 
     Package { ensure => "installed" }
 
