@@ -46,6 +46,22 @@ Vagrant.configure("2") do |config|
     end
   end
 
+  # -- Softether based VPN server
+  config.vm.define "vpnserver", autostart: false do |vpnserver|
+    vpnserver.vm.box = "ubuntu/trusty64"
+    vpnserver.vm.hostname = "vpnserver"
+    vpnserver.vm.network "forwarded_port", guest: 80, host: 8098
+    vpnserver.vm.network "forwarded_port", guest: 443, host: 8099
+    vpnserver.vm.provision :puppet do |puppet|
+         puppet.manifests_path = "puppet/manifests"
+         puppet.module_path = "puppet/modules"
+         puppet.manifest_file  = "ska_vpn_server.pp"
+         puppet.facter = {
+            'fqdn' => 'ska_vpn_server'
+         }
+    end
+  end
+
   # -- throwaway ubunutu box for running puppet unit tests
   config.vm.define "ubuntu_test", autostart: false do |ubuntu_test|
     ubuntu_test.vm.box = "ubuntu/trusty64"

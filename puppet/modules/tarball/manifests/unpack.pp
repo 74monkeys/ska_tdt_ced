@@ -11,7 +11,7 @@ define tarball::unpack($pkg_tgz, $install_dir) {
 
     # untar the tarball at the desired location
     exec { "untar $work_dir/$pkg_tgz":
-        command => "/bin/tar xzvf $work_dir/pkg_tgz -C $install_dir/",
+        command => "$tar_exe xzvf $work_dir/pkg_tgz -C $install_dir/",
         refreshonly => true,
         require => File["$work_dir/$pkg_tgz", "$install_dir"],
     }

@@ -1,0 +1,4 @@
+#!/bin/sh
+CMD=<%= scope.lookupvar('softethervpn::server::working_dir') %>/vpnserver/vpncmd
+test -x $CMD || exit 0
+$CMD "$@"

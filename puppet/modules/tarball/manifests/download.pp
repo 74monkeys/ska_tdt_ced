@@ -1,11 +1,15 @@
-define tarball::download($url, $tar_file, $install_dir) {
+define tarball::download($url, $tar_file, $install_dir, $work_dir=$tarball::work_dir) {
 
     include tarball
 
     package { "wget": ensure => "installed" }
 
-    $work_dir = "$tarball::work_dir"
-    $pkg_file = "$work_dir/$tar_file"
+    if $tar_file =~ /^\/.*/ {
+        $pkg_file = "$tar_file"
+    }
+    else {
+        $pkg_file = "$work_dir/$tar_file"
+    }
 
     file { "$install_dir":
         ensure => directory,
