@@ -1,17 +1,23 @@
-# Class: lcov::params
+# Class: lcovswitch::params
 #
-# This class manages parameters for the lcov module
+# This class sets the lcov module needed
 #
 class lcov::params {
-  case $::osfamily {
-    'RedHat': {
-      $lcov_packages = [ 'lcov' ]
-    }
-    'Debian': {
-      $lcov_packages = [ 'lcov' ]
-    }
-    default: {
-      fail("Class['lcov::params']: Unsupported osfamily: ${::osfamily}")
+  if $::osfamily == 'Debian' and $::operatingsystemrelease =~ /^14\./ {
+    $lcov_version = 'lcov::lcov113'
+  }
+  else {
+    $lcov_version = 'lcov::lcov_standard'
+    case $::osfamily {
+      'RedHat': {
+        $lcov_packages = [ 'lcov' ]
+      }
+      'Debian': {
+        $lcov_packages = [ 'lcov' ]
+      }
+      default: {
+        fail("Class['lcov::params']: Unsupported osfamily: ${::osfamily}")
+      }
     }
   }
 }

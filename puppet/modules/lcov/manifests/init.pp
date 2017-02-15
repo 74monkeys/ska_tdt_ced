@@ -12,7 +12,7 @@
 # Sample Usage:
 #
 class lcov(
-  $lcov_packages = $lcov::params::lcov_packages,
+  $lcov_version = $lcov::params::lcov_version,
 ) inherits lcov::params {
-  ensure_packages($lcov_packages)
+  require $lcov_version
 }
