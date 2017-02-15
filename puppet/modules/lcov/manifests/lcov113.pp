@@ -1,5 +1,5 @@
 # Install lcov v1.13
-class lcov113 {
+class lcov::lcov113 {
   require git::client
   require make
 
