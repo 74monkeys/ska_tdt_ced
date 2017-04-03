@@ -5,7 +5,7 @@
 class blas::params {
   case $::osfamily {
     'RedHat': {
-      $blas_packages = [ 'blas_devel' ]
+      $blas_packages = [ 'blas-devel' ]
     }
     'Debian': {
       $blas_packages = [ 'libblas-dev' ]

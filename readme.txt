@@ -51,3 +51,9 @@ Description : A workstation with all the common pulsar analysis tools installed
 
 Name        : ciserver
 Description : A server for continous integration development powerd by Jenkins
+
+Name        : cislave_ubuntu
+Description : A slave server for continous integration development powerd by Jenkins running under Ubuntu
+
+Name        : cislave_centos
+Description : A slave server for continous integration development powerd by Jenkins running under CentOS

@@ -7,12 +7,13 @@ class lcov::params {
     $lcov_version = 'lcov::lcov113'
   }
   else {
-    $lcov_version = 'lcov::lcov_standard'
     case $::osfamily {
       'RedHat': {
+        $lcov_version = 'lcov::lcov113'
         $lcov_packages = [ 'lcov' ]
       }
       'Debian': {
+        $lcov_version = 'lcov::lcov_standard'
         $lcov_packages = [ 'lcov' ]
       }
       default: {

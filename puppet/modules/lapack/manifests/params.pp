@@ -5,7 +5,7 @@
 class lapack::params {
   case $::osfamily {
     'RedHat': {
-      $lapack_packages = [ 'lapack_devel' ]
+      $lapack_packages = [ 'lapack-devel' ]
     }
     'Debian': {
       $lapack_packages = [ 'liblapack-dev' ]

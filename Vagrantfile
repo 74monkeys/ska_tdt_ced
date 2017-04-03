@@ -1,6 +1,35 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+# Ensure required plugins are installed
+#
+#  vagrant-vbguest
+#    CentOS/7 image does not come with virtualbox additions so vagrant-vbguest adds them in
+required_plugins = %w( vagrant-vbguest )
+required_plugins.each do |plugin|
+    exec "vagrant plugin install #{plugin};vagrant #{ARGV.join(" ")}" unless Vagrant.has_plugin? plugin || ARGV[0] == 'plugin'
+end
+
+# An Array of boxes
+#   This defines different OS types that can be used in the vm definitions
+boxes = [
+    {
+      :box => "ubuntu/trusty64",
+      :os_name => "ubuntu",
+      :box_url => "http://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box"
+    },
+    {
+      :box => "centos/7",
+      :os_name => "centos",
+      :provision_script => <<ENDSCRIPT
+        rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-7.noarch.rpm
+        yes | yum -y install puppet
+ENDSCRIPT
+    }
+
+]
+
+
 Vagrant.configure("2") do |config|
 
   #config.vm.provision :puppet do |puppet|
@@ -43,6 +72,28 @@ Vagrant.configure("2") do |config|
          puppet.facter = {
             'fqdn' => 'skabuildmaster'
          }
+    end
+  end
+
+# Configuration for cislave for both ubuntu and CentOS
+  boxes.each do |box|
+    config.vm.define "cislave" + "_" + box[:os_name], autostart: false do |cislave|
+      cislave.vm.box = box[:box]
+      if box.key?(:box_url)
+        cislave.vm.box_url = box[:box_url]
+      end
+      if box.key?(:provision_script)
+        cislave.vm.provision "shell", inline: box[:provision_script]
+      end
+      cislave.vm.hostname = "cislave" + "-" + box[:os_name]
+      cislave.vm.provision :puppet do |puppet|
+           puppet.manifests_path = "puppet/manifests"
+           puppet.module_path = "puppet/modules"
+           puppet.manifest_file  = "ci_slave_box.pp"
+           puppet.facter = {
+              'fqdn' => 'skacislave'
+           }
+      end
     end
   end
 

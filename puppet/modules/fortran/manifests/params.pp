@@ -7,7 +7,7 @@
 class fortran::params {
   case $::osfamily {
     'RedHat': {
-      $fortran_packages = [ 'gfortran' ]
+      $fortran_packages = [ 'gcc-gfortran' ]
     }
     'Debian': {
       $fortran_packages = [ 'gfortran', 'build-essential' ]

@@ -5,7 +5,7 @@
 class fftw3::params {
   case $::osfamily {
     'RedHat': {
-      $fftw3_packages = [ 'fftw3_devel' ]
+      $fftw3_packages = [ 'fftw-devel' ]
     }
     'Debian': {
       $fftw3_packages = [ 'libfftw3-dev' ]
