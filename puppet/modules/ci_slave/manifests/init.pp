@@ -11,6 +11,7 @@ class ci_slave (
     require lapack
     require blas
     require lcov
+    require boost
 
     Package { ensure => "installed" }
 
