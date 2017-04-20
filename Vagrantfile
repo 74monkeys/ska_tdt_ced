@@ -149,7 +149,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.box_url = "http://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box"
   config.vm.provider :virtualbox do |v|
-      v.customize ["modifyvm", :id, "--memory", "1024"]
+      v.customize ["modifyvm", :id, "--memory", "4096"]
   end
 
   # Create a forwarded port mapping which allows access jenkins via host port 1234
