@@ -8,7 +8,7 @@ class boost::params {
       $boost_packages = [ 'boost' ]
     }
     'Debian': {
-      $boost_packages = [ 'libboost-dev', 'libboost-program-options-dev' ]
+      $boost_packages = [ 'libboost-all-dev', 'libboost-filesystem-dev' ]
     }
     default: {
       fail("Class['boost::params']: Unsupported osfamily: ${::osfamily}")
